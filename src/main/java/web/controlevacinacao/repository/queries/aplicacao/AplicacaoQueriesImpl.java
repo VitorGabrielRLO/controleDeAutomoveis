@@ -13,7 +13,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import web.controlevacinacao.filter.AplicacaoFilter;
-import web.controlevacinacao.model.Aplicacao;
+import web.controlevacinacao.model.Saida;
 import web.controlevacinacao.pagination.PaginacaoUtil;
 
 public class AplicacaoQueriesImpl implements AplicacaoQueries {
@@ -22,15 +22,15 @@ public class AplicacaoQueriesImpl implements AplicacaoQueries {
 	private EntityManager em;
 
 	@Override
-	public Aplicacao buscar(Long codigo) {
+	public Saida buscar(Long codigo) {
 		String query = "select distinct a from Aplicacao a inner join fetch a.pessoa inner join fetch a.lote inner join fetch a.lote.vacina where a.status = 'ATIVO' and a.codigo = :codigo";
-		TypedQuery<Aplicacao> typedQuery = em.createQuery(query, Aplicacao.class);
+		TypedQuery<Saida> typedQuery = em.createQuery(query, Saida.class);
 		typedQuery.setParameter("codigo", codigo);
 		return typedQuery.getSingleResult();
 	}
 
 	@Override
-	public Page<Aplicacao> pesquisar(AplicacaoFilter filtro, Pageable pageable) {
+	public Page<Saida> pesquisar(AplicacaoFilter filtro, Pageable pageable) {
 
 		StringBuilder queryAplicacoes = new StringBuilder("select distinct a from Aplicacao a inner join fetch a.pessoa inner join fetch a.lote inner join fetch a.lote.vacina");
 		StringBuilder condicoes = new StringBuilder();
@@ -46,10 +46,10 @@ public class AplicacaoQueriesImpl implements AplicacaoQueries {
 
 		queryAplicacoes.append(condicoes);
 		PaginacaoUtil.prepararOrdemJPQL(queryAplicacoes, "a", pageable);
-		TypedQuery<Aplicacao> typedQuery = em.createQuery(queryAplicacoes.toString(), Aplicacao.class);
+		TypedQuery<Saida> typedQuery = em.createQuery(queryAplicacoes.toString(), Saida.class);
 		PaginacaoUtil.prepararIntervalo(typedQuery, pageable);
 		PaginacaoUtil.preencherParametros(parametros, typedQuery);
-		List<Aplicacao> aplicacoes = typedQuery.getResultList();
+		List<Saida> aplicacoes = typedQuery.getResultList();
 
 		long totalAplicacoes = PaginacaoUtil.getTotalRegistros("Aplicacao", "a", condicoes, parametros, em);
 

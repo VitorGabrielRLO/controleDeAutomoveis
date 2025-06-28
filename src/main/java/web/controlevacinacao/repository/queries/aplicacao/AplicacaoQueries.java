@@ -4,12 +4,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import web.controlevacinacao.filter.AplicacaoFilter;
-import web.controlevacinacao.model.Aplicacao;
+import web.controlevacinacao.model.Saida;
 
 public interface AplicacaoQueries {
 
-	Page<Aplicacao> pesquisar(AplicacaoFilter filtro, Pageable pageable);
+	Page<Saida> pesquisar(AplicacaoFilter filtro, Pageable pageable);
 	
-	Aplicacao buscar(Long codigo);
+	Saida buscar(Long codigo);
 
 }

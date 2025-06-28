@@ -24,26 +24,19 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(configurer -> configurer
-                        // Qualquer um pode fazer requisições para essas URLs
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/", "/index.html").permitAll()
-                        // Um usuário autenticado e com o papel ADMIN pode fazer requisições para essas
-                        // URLs
                         .requestMatchers("/vacinas/cadastrar").hasRole("ADMIN")
                         .requestMatchers("/usuarios/cadastrar").hasRole("ADMIN")
                         .anyRequest().permitAll())
-                // .requestMatchers("URL").hasAnyRole("ADMIN", "USUARIO")
                 .formLogin(form -> form
-                        // Uma página de login customizada
                         .loginPage("/login")
-                        // Define a URL para onde o usuário será redirecionado após o login
                         .defaultSuccessUrl("/index.html")
-                        // Define a URL para o caso de falha no login
-                        // .failureUrl("/login-error")
                         .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
+                        // ===== A LINHA ABAIXO FOI CORRIGIDA =====
                         .logoutSuccessHandler(
-                                (_, response, _) -> response.addHeader("HX-Redirect", "/"))
+                                (request, response, authentication) -> response.addHeader("HX-Redirect", "/"))
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID"))
                 .sessionManagement(session -> session
@@ -67,20 +60,10 @@ public class SecurityConfig {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        // return Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
-
-        // Usar um PasswordEncoder que aceite todos os esquemas disponiveis no Spring
-        // Security
-        // mas escolhendo quais vamos aceitar. As senhas comecam dizendo qual o esquema
-        // usado {noop}, {bcrypt}, {argon2}
         String idEnconder = "argon2";
         Map<String, PasswordEncoder> encoders = new HashMap<>();
         encoders.put("argon2", Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8());
         encoders.put("noop", NoOpPasswordEncoder.getInstance());
-        // encoders.put("bcrypt", new BCryptPasswordEncoder());
-        // encoders.put("pbkdf2", new Pbkdf2PasswordEncoder());
-        // encoders.put("scrypt", new SCryptPasswordEncoder());
-        // encoders.put("sha256", new StandardPasswordEncoder());
         PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(idEnconder, encoders);
         return passwordEncoder;
     }

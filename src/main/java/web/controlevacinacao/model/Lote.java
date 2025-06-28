@@ -46,7 +46,7 @@ public class Lote implements Serializable {
 	@NotNull(message = "A vacina é obrigatória")
 	@ManyToOne
 	@JoinColumn(name = "codigo_vacina")
-	private Vacina vacina;
+	private Veiculo vacina;
 	@Enumerated(EnumType.STRING)
 	private Status status = Status.ATIVO;
 
@@ -82,11 +82,11 @@ public class Lote implements Serializable {
 		this.nroDosesAtual = nroDosesAtual;
 	}
 
-	public Vacina getVacina() {
+	public Veiculo getVacina() {
 		return vacina;
 	}
 
-	public void setVacina(Vacina vacina) {
+	public void setVacina(Veiculo vacina) {
 		this.vacina = vacina;
 	}
 

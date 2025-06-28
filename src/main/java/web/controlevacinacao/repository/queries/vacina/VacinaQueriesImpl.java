@@ -13,7 +13,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
 import web.controlevacinacao.filter.VacinaFilter;
-import web.controlevacinacao.model.Vacina;
+import web.controlevacinacao.model.Veiculo;
 import web.controlevacinacao.pagination.PaginacaoUtil;
 
 public class VacinaQueriesImpl implements VacinaQueries {
@@ -21,7 +21,7 @@ public class VacinaQueriesImpl implements VacinaQueries {
 	@PersistenceContext
 	private EntityManager em;
 
-	public Page<Vacina> pesquisar(VacinaFilter filtro, Pageable pageable) {
+	public Page<Veiculo> pesquisar(VacinaFilter filtro, Pageable pageable) {
 
 		StringBuilder queryVacinas = new StringBuilder("select distinct v from Vacina v");
 		StringBuilder condicoes = new StringBuilder();
@@ -37,10 +37,10 @@ public class VacinaQueriesImpl implements VacinaQueries {
 
 		queryVacinas.append(condicoes);
 		PaginacaoUtil.prepararOrdemJPQL(queryVacinas, "v", pageable);
-		TypedQuery<Vacina> typedQuery = em.createQuery(queryVacinas.toString(), Vacina.class);
+		TypedQuery<Veiculo> typedQuery = em.createQuery(queryVacinas.toString(), Veiculo.class);
 		PaginacaoUtil.prepararIntervalo(typedQuery, pageable);
 		PaginacaoUtil.preencherParametros(parametros, typedQuery);
-		List<Vacina> vacinas = typedQuery.getResultList();
+		List<Veiculo> vacinas = typedQuery.getResultList();
 
 		long totalVacinas = PaginacaoUtil.getTotalRegistros("Vacina", "v", condicoes, parametros, em);
 

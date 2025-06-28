@@ -4,10 +4,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import web.controlevacinacao.filter.VacinaFilter;
-import web.controlevacinacao.model.Vacina;
+import web.controlevacinacao.model.Veiculo;
 
 public interface VacinaQueries {
 
-	Page<Vacina> pesquisar(VacinaFilter filtro, Pageable pageable);
+	Page<Veiculo> pesquisar(VacinaFilter filtro, Pageable pageable);
 	
 }
