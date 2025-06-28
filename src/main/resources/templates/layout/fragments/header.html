@@ -30,10 +30,19 @@
       </a>
 
       <!-- Usuário e login/logout -->
-      <div class="hidden items-center md:flex">
-        <div class="text-sm text-gray-300 md:text-xl">Grosbilda</div>
-        <a href="#" class="ml-5 rounded-lg border-2 border-gray-600 bg-gray-600 px-8 py-2 text-white shadow-md hover:bg-white hover:text-gray-600"> Login </a>
-        <a href="#" class="ml-5 rounded-lg border-2 border-gray-600 bg-gray-600 px-8 py-2 text-white shadow-md hover:bg-white hover:text-gray-600"> Logout </a>
+      <div class="hidden items-center md:flex" th:fragment="usuariologinlogout" id="usuariologinlogout" hx-swap-oob="true">
+        <!-- botao login -->
+        <div sec:authorize="!isAuthenticated()">
+          <a th:hx-get="@{/login}" hx-target="#main" hx-swap="outerHTML" hx-push-url="true" class="ml-5 rounded-lg border-2 border-gray-600 bg-gray-600 px-8 py-2 text-white shadow-md hover:bg-white hover:text-gray-600"> Login </a>
+        </div>
+        <!-- nome do usuario -->
+        <div sec:authorize="isAuthenticated()">
+          <div class="text-sm text-gray-300 md:text-xl"><span sec:authentication="principal.username"></span></div>
+        </div>
+        <!-- botao logout -->
+        <div sec:authorize="isAuthenticated()">
+          <a th:hx-post="@{/logout}" hx-target="#main" hx-swap="outerHTML" hx-push-url="true" class="ml-5 rounded-lg border-2 border-gray-600 bg-gray-600 px-8 py-2 text-white shadow-md hover:bg-white hover:text-gray-600"> Logout </a>
+        </div>
       </div>
 
       <!-- Botao Usuario -->

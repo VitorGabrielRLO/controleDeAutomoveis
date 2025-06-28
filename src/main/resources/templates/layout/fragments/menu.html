@@ -17,9 +17,9 @@
       <!-- Opcoes do 1o Item Menu -->
       <div x-show="open" class="space-y-4 ps-10">
         <!-- 1a Opcao -->
-        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Cadastrar', '/', ~{::#cadastrar-icon})}"></div>
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Cadastrar', @{/pessoas/cadastrar}, ~{::#cadastrar-icon})}"></div>
         <!-- 2a Opcao -->
-        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Pesquisar', '/', ~{::#pesquisar-icon})}"></div>
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Pesquisar', @{/pessoas/abrirpesquisa}, ~{::#pesquisar-icon})}"></div>
       </div>
     </div>
 
@@ -58,9 +58,9 @@
       <!-- Opcoes do 4o Item Menu -->
       <div x-show="open" class="space-y-4 ps-10">
         <!-- 1a Opcao -->
-        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Cadastrar', '/', ~{::#cadastrar-icon})}"></div>
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Cadastrar', @{/aplicacoes/abrirpesquisarpessoa}, ~{::#cadastrar-icon})}"></div>
         <!-- 2a Opcao -->
-        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Pesquisar', '/', ~{::#pesquisar-icon})}"></div>
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Pesquisar', @{/aplicacoes/abrirpesquisar}, ~{::#pesquisar-icon})}"></div>
       </div>
     </div>
 
@@ -76,6 +76,89 @@
         <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Lotes', '/', ~{::#pdf-icon})}"></div>
         <!-- 3a Opcao -->
         <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Aplicações', '/', ~{::#pdf-icon})}">
+        </div>
+      </div>
+    </div>
+
+    <!-- 6o Item Menu -->
+    <div x-data="{ open: false }">
+      <button @click="open = !open" class="flex w-48 cursor-pointer items-center justify-between py-3 text-gray-400 hover:text-white focus:outline-none">
+        <span class="flex items-center">
+          <!-- Imagem -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-raised-hand" viewBox="0 0 16 16">
+            <path d="M6 6.207v9.043a.75.75 0 0 0 1.5 0V10.5a.5.5 0 0 1 1 0v4.75a.75.75 0 0 0 1.5 0v-8.5a.25.25 0 1 1 .5 0v2.5a.75.75 0 0 0 1.5 0V6.5a3 3 0 0 0-3-3H6.236a1 1 0 0 1-.447-.106l-.33-.165A.83.83 0 0 1 5 2.488V.75a.75.75 0 0 0-1.5 0v2.083c0 .715.404 1.37 1.044 1.689L5.5 5c.32.32.5.754.5 1.207" />
+            <path d="M8 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
+          </svg>
+          <!-- Texto -->
+          <span class="ms-2">Usuários</span>
+        </span>
+
+        <!-- Seta direito/baixo -->
+        <span>
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path x-show="! open" d="M9 5L16 12L9 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none"></path>
+            <path x-show="open" d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </span>
+      </button>
+
+      <!-- Opcoes do 6o Item Menu -->
+      <div x-show="open" class="space-y-4 ps-10">
+        <!-- 1a Opcao -->
+        <div class="flex items-center hover:text-white">
+          <!-- Imagem -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
+            <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1M.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8z" />
+          </svg>
+          <!-- Texto -->
+          <a th:hx-get="@{/usuarios/cadastrar}" hx-target="#main" hx-swap="outerHTML" hx-push-url="true" class="cursor-pointer px-2 text-gray-400 hover:text-white">Cadastrar</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7o Item Menu -->
+    <div x-data="{ open: false }">
+      <button @click="open = !open" class="flex w-48 cursor-pointer items-center justify-between py-3 text-gray-400 hover:text-white focus:outline-none">
+        <span class="flex items-center">
+          <!-- Imagem -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-printer-fill" viewBox="0 0 16 16">
+            <path d="M5 1a2 2 0 0 0-2 2v1h10V3a2 2 0 0 0-2-2zm6 8H5a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1" />
+            <path d="M0 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2h-1v-2a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v2H2a2 2 0 0 1-2-2zm2.5 1a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1" />
+          </svg>
+          <!-- Texto -->
+          <span class="ms-2">Relatórios</span>
+        </span>
+
+        <!-- Seta direito/baixo -->
+        <span>
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path x-show="! open" d="M9 5L16 12L9 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none"></path>
+            <path x-show="open" d="M19 9L12 16L5 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+          </svg>
+        </span>
+      </button>
+
+      <!-- Opcoes do 7o Item Menu -->
+      <div x-show="open" class="space-y-4 ps-10">
+        <!-- 1a Opcao -->
+        <div class="flex items-center hover:text-white">
+          <!-- Imagem -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filetype-pdf" viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+              d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zM1.6 11.85H0v3.999h.791v-1.342h.803q.43 0 .732-.173.305-.175.463-.474a1.4 1.4 0 0 0 .161-.677q0-.375-.158-.677a1.2 1.2 0 0 0-.46-.477q-.3-.18-.732-.179m.545 1.333a.8.8 0 0 1-.085.38.57.57 0 0 1-.238.241.8.8 0 0 1-.375.082H.788V12.48h.66q.327 0 .512.181.185.183.185.522m1.217-1.333v3.999h1.46q.602 0 .998-.237a1.45 1.45 0 0 0 .595-.689q.196-.45.196-1.084 0-.63-.196-1.075a1.43 1.43 0 0 0-.589-.68q-.396-.234-1.005-.234zm.791.645h.563q.371 0 .609.152a.9.9 0 0 1 .354.454q.118.302.118.753a2.3 2.3 0 0 1-.068.592 1.1 1.1 0 0 1-.196.422.8.8 0 0 1-.334.252 1.3 1.3 0 0 1-.483.082h-.563zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638z" />
+          </svg>
+          <!-- Texto -->
+          <a th:href="@{/relatorios/vacinassimples}" class="cursor-pointer px-2 text-gray-400 hover:text-white">Vacinas Simples</a>
+        </div>
+        <!-- 2a Opcao -->
+        <div class="flex items-center hover:text-white">
+          <!-- Imagem -->
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-filetype-pdf" viewBox="0 0 16 16">
+            <path fill-rule="evenodd"
+              d="M14 4.5V14a2 2 0 0 1-2 2h-1v-1h1a1 1 0 0 0 1-1V4.5h-2A1.5 1.5 0 0 1 9.5 3V1H4a1 1 0 0 0-1 1v9H2V2a2 2 0 0 1 2-2h5.5zM1.6 11.85H0v3.999h.791v-1.342h.803q.43 0 .732-.173.305-.175.463-.474a1.4 1.4 0 0 0 .161-.677q0-.375-.158-.677a1.2 1.2 0 0 0-.46-.477q-.3-.18-.732-.179m.545 1.333a.8.8 0 0 1-.085.38.57.57 0 0 1-.238.241.8.8 0 0 1-.375.082H.788V12.48h.66q.327 0 .512.181.185.183.185.522m1.217-1.333v3.999h1.46q.602 0 .998-.237a1.45 1.45 0 0 0 .595-.689q.196-.45.196-1.084 0-.63-.196-1.075a1.43 1.43 0 0 0-.589-.68q-.396-.234-1.005-.234zm.791.645h.563q.371 0 .609.152a.9.9 0 0 1 .354.454q.118.302.118.753a2.3 2.3 0 0 1-.068.592 1.1 1.1 0 0 1-.196.422.8.8 0 0 1-.334.252 1.3 1.3 0 0 1-.483.082h-.563zm3.743 1.763v1.591h-.79V11.85h2.548v.653H7.896v1.117h1.606v.638z" />
+          </svg>
+          <!-- Texto -->
+          <a th:href="@{/relatorios/vacinaslotes}" class="cursor-pointer px-2 text-gray-400 hover:text-white">Vacinas Completo</a>
         </div>
       </div>
     </div>
