@@ -29,7 +29,8 @@
                     <p th:if="${#fields.hasErrors('veiculo')}" th:errors="*{veiculo}" class="text-sm text-red-600 mt-2"></p>
                 </div>
 
-                <div th:replace="~{layout/fragments/forms :: inputtext('Quilometragem de Saída', 'kmSaida')}"></div>
+                <div th:replace="~{layout/fragments/forms :: inputtext('Quantos KM vai rodar?', 'kmAndado')}"></div>
+                
                 <div th:replace="~{layout/fragments/forms :: inputtext('Destino', 'destino')}"></div>
                 
                 <div>

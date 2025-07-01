@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,17 +30,10 @@ public class UsuarioController {
 
 	private static final Logger logger = LoggerFactory.getLogger(UsuarioController.class);
 	
-	private PapelRepository papelRepository;
-	private CadastroUsuarioService cadastroUsuarioService;
-	private PasswordEncoder passwordEncoder;
+	@Autowired private PapelRepository papelRepository;
+	@Autowired private CadastroUsuarioService cadastroUsuarioService;
+	@Autowired private PasswordEncoder passwordEncoder;
 	
-	public UsuarioController(PapelRepository papelRepository, CadastroUsuarioService cadastroUsuarioService,
-			PasswordEncoder passwordEncoder) {
-		this.papelRepository = papelRepository;
-		this.cadastroUsuarioService = cadastroUsuarioService;
-		this.passwordEncoder = passwordEncoder;
-	}
-
 	@GetMapping("/cadastrar")
 	@HxRequest
 	public String abrirCadastroUsuario(Usuario usuario, Model model) {
@@ -53,31 +47,21 @@ public class UsuarioController {
 	public String cadastrarNovoUsuario(@Valid Usuario usuario, BindingResult resultado, Model model, RedirectAttributes redirectAttributes) {
 		if (resultado.hasErrors()) {
 			logger.info("O usuario recebido para cadastrar não é válido.");
-			logger.info("Erros encontrados:");
 			for (FieldError erro : resultado.getFieldErrors()) {
 				logger.info("{}", erro);
 			}
-			List<Papel> papeis = papelRepository.findAll();
-			model.addAttribute("todosPapeis", papeis);
+			// É importante recarregar os papéis em caso de erro para a tela não quebrar
+			model.addAttribute("todosPapeis", papelRepository.findAll());
 			return "usuarios/cadastrar :: formulario";
 		} else {
 			usuario.setAtivo(true);
+			// Criptografa a senha antes de salvar
 			usuario.setSenha(passwordEncoder.encode(usuario.getSenha()));
 			cadastroUsuarioService.salvar(usuario);
-			redirectAttributes.addAttribute("mensagem", "Cadastro de usuário efetuado com sucesso.");
-			return "redirect:/usuarios/cadastrosucesso";
+
+			redirectAttributes.addFlashAttribute("notificacao", new NotificacaoSweetAlert2(
+                    "Usuário cadastrado com sucesso!", TipoNotificaoSweetAlert2.SUCCESS, 4000));
+			return "redirect:/usuarios/cadastrar";
 		}
-	}
-	
-	@GetMapping("/cadastrosucesso")
-	@HxRequest
-	public String mostrarCadastroSucesso(String mensagem, Usuario usuario, Model model) {
-		List<Papel> papeis = papelRepository.findAll();
-		model.addAttribute("todosPapeis", papeis);
-		if (mensagem != null && !mensagem.isEmpty()) {
-            model.addAttribute("notificacao", new NotificacaoSweetAlert2(mensagem,
-                    TipoNotificaoSweetAlert2.SUCCESS, 4000));
-        }
-		return "usuarios/cadastrar :: formulario";
 	}
 }
