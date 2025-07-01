@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<jasperReport ...> <parameter name="CODIGO_FUNCIONARIO" class="java.lang.Long"/>
-    <queryString>
-        <![CDATA[SELECT v.placa, s.data_hora_saida, s.destino FROM saida s JOIN veiculo v ON s.codigo_veiculo = v.codigo WHERE s.codigo_funcionario = $P{CODIGO_FUNCIONARIO}]]>
-    </queryString>
-    </jasperReport>

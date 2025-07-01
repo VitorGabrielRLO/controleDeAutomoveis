@@ -17,9 +17,13 @@ public class RelatoriosService {
         this.jaspersoftUtil = jaspersoftUtil;
     }
 
-    public byte[] gerarRelatorioSaidasPorFuncionario() {
-        String arquivoJasper = "/relatorios/funcionarios_saidas.jasper";
-        // Não precisamos de parâmetros aqui, pois a query principal busca todos
-        return jaspersoftUtil.gerarRelatorio(arquivoJasper, null, dataSource);
+    public byte[] gerarRelatorioSimplesTodasVacinas() {
+        return jaspersoftUtil.gerarRelatorio("/relatorios/RelatorioSQLDiretoSimples2.jasper", null, dataSource);
+    }
+
+    public byte[] gerarRelatorioComplexoTodasVacinasLotes() {
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("TITULO", "Vacinas com Lotes");
+        return jaspersoftUtil.gerarRelatorio("/relatorios/RelatorioSQLDiretoComplexoParametros2.jasper", parametros, dataSource);
     }
 }

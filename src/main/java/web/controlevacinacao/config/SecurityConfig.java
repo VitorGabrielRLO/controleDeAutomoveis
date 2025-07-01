@@ -25,20 +25,18 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(configurer -> configurer
                         .requestMatchers("/css/**", "/js/**", "/images/**", "/", "/index.html").permitAll()
-                        .requestMatchers("/veiculos/cadastrar", "/veiculos/alterar/**", "/veiculos/remover/**").hasRole("ADMIN")
-                        .requestMatchers("/funcionarios/cadastrar", "/funcionarios/alterar/**", "/funcionarios/remover/**").hasRole("ADMIN")
+                        .requestMatchers("/vacinas/cadastrar").hasRole("ADMIN")
                         .requestMatchers("/usuarios/cadastrar").hasRole("ADMIN")
-                        .requestMatchers("/relatorios/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().permitAll())
                 .formLogin(form -> form
                         .loginPage("/login")
-                        .defaultSuccessUrl("/", true)
+                        .defaultSuccessUrl("/index.html")
                         .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
+                        // ===== A LINHA ABAIXO FOI CORRIGIDA =====
                         .logoutSuccessHandler(
-                                (request, response, authentication) -> response.addHeader("HX-Redirect", "/login"))
+                                (request, response, authentication) -> response.addHeader("HX-Redirect", "/"))
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID"))
                 .sessionManagement(session -> session
@@ -49,17 +47,14 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService(DataSource dataSource) {
         JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
-
-        // Consulta para buscar o usuário pelo nome de usuário
-        manager.setUsersByUsernameQuery("select nome_usuario, senha, ativo from usuario where nome_usuario = ?");
-
-        // ===== CONSULTA DE AUTORIDADES CORRIGIDA E SIMPLIFICADA =====
+        manager.setUsersByUsernameQuery("select nome_usuario, senha, ativo "
+                + "from usuario "
+                + "where nome_usuario = ?");
         manager.setAuthoritiesByUsernameQuery(
-                "select u.nome_usuario, p.nome from usuario_papel up " +
-                "join usuario u on u.codigo = up.codigo_usuario " +
-                "join papel p on p.codigo = up.codigo_papel " +
-                "where u.nome_usuario = ?");
-        
+                "SELECT tab.nome_usuario , papel.nome FROM"
+                        + "(SELECT usuario.nome_usuario , usuario.codigo FROM usuario WHERE nome_usuario = ?) as tab "
+                        + " INNER JOIN usuario_papel ON codigo_usuario = tab.codigo "
+                        + " INNER JOIN papel ON codigo_papel = papel.codigo;");
         return manager;
     }
 
