@@ -1,15 +1,4 @@
-<!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" th:href="@{/css/style.css}" />
-  <title>Controle de Veículos</title>
-</head>
-
-<body>
-  <nav th:fragment="menu" class="mt-10">
+<nav th:fragment="menu" class="mt-10">
     
     <div x-data="{ open: false }">
       <button th:replace="~{layout/fragments/menu-item-button :: menu-item-button('Veículo', ~{::#veiculo-icon})}"></button>
@@ -35,59 +24,21 @@
       </div>
     </div>
 
-    <div x-data="{ open: false }">
-  <button th:replace="~{layout/fragments/menu-item-button :: menu-item-button('Relatórios', ~{::#relatorios-icon})}"></button>
-  <div x-show="open" class="space-y-4 ps-10">
-    <div class="flex items-center hover:text-white">
-        <svg th:replace="~{::#pdf-icon}"></svg>
-        <a th:href="@{/relatorios/saidas-por-funcionario}" target="_blank" class="cursor-pointer px-2 text-gray-400 hover:text-white">Saídas por Funcionário</a>
+    <div x-data="{ open: false }" sec:authorize="hasRole('ADMIN')">
+        <button th:replace="~{layout/fragments/menu-item-button :: menu-item-button('Relatórios', ~{::#relatorios-icon})}"></button>
+        <div x-show="open" class="space-y-4 ps-10">
+            <div class="flex items-center hover:text-white">
+                <svg th:replace="~{::#pdf-icon}"></svg>
+                <a th:href="@{/relatorios/saidas-por-funcionario}" target="_blank" class="cursor-pointer px-2 text-gray-400 hover:text-white">Saídas por Funcionário</a>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-    <div x-data="{ open: false }">
+    <div x-data="{ open: false }" sec:authorize="hasRole('ADMIN')">
         <button th:replace="~{layout/fragments/menu-item-button :: menu-item-button('Usuários', ~{::#pessoa-icon})}"></button>
         <div x-show="open" class="space-y-4 ps-10">
             <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Cadastrar', @{/usuarios/cadastrar}, ~{::#cadastrar-icon})}"></div>
         </div>
     </div>
 
-  </nav>
-
-  <svg id="veiculo-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-car-front-fill" viewBox="0 0 16 16">
-    <path d="M2.52 3.515A2.5 2.5 0 0 1 4.82 2h6.362c1 0 1.904.596 2.298 1.515l.792 1.848c.075.175.21.319.38.404.5.25.855.715.965 1.262l.335 1.673c.09.448.01.92-.184 1.325a2.25 2.25 0 0 1-1.025.977l.086.417a1 1 0 1 1-1.94.424l-.082-.4-1.222.815a.5.5 0 0 1-.507 0l-1.222-.815-.082.4a1 1 0 1 1-1.94-.424l.086-.417a2.25 2.25 0 0 1-1.025-.977 2.22 2.22 0 0 1-.184-1.325l.335-1.673c.11-.547.465-1.012.965-1.262.17-.085.305-.229.38-.404l.792-1.848ZM3 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2m10 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2M6 8a1 1 0 0 0 0 2h4a1 1 0 1 0 0-2zM2.906 5.189a.51.51 0 0 0 .497.731c.91-.073 1.358-.585 1.432-1.028.28-.058.408.31.751.558l.349.255c.25.18.42.42.55.693.04.1.07.213.09.324l.01.072c.06.315.145.621.28.89.13.25.324.47.56.65l.014.01c.23.17.48.29.74.34l.014.003c.255.05.515.05.77-.005l.014-.003c.26-.05.51-.17.74-.34l.014-.01c.237-.18.43-.4.56-.65l.004-.007c.135-.269.22-.575.28-.89l.01-.072c.02-.11.05-.224.09-.324.13-.273.3-.513.55-.693l.35-.255c.34-.248.47-.616.75-.558.075.443.522.955 1.432 1.028.28.08.546-.055.623-.332l.792-1.848a.5.5 0 0 0-.21-.595c-.596-.346-1.587-.508-2.55-.508H4.82c-.963 0-1.954.162-2.55.508a.5.5 0 0 0-.21.595z"/>
-  </svg>
-
-  <svg id="funcionario-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-badge-fill" viewBox="0 0 16 16">
-    <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2zm4.5 0a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1zM8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6m5 2.755C12.146 12.825 10.623 12 8 12s-4.146.826-5 1.755V14a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1z"/>
-  </svg>
-
-  <svg id="saida-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16">
-    <path fill-rule="evenodd" d="M8.636 3.5a.5.5 0 0 0-.5-.5H1.5A1.5 1.5 0 0 0 0 4.5v10A1.5 1.5 0 0 0 1.5 16h10a1.5 1.5 0 0 0 1.5-1.5V7.864a.5.5 0 0 0-1 0V14.5a.5.5 0 0 1-.5.5h-10a.5.5 0 0 1-.5-.5v-10a.5.5 0 0 1 .5-.5h6.636a.5.5 0 0 0 .5-.5"/>
-    <path fill-rule="evenodd" d="M16 .5a.5.5 0 0 0-.5-.5h-5a.5.5 0 0 0 0 1h3.793L6.146 9.146a.5.5 0 1 0 .708.708L15 1.707V5.5a.5.5 0 0 0 1 0z"/>
-  </svg>
-
-  <svg id="pessoa-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person-raised-hand" viewBox="0 0 16 16">
-    <path d="M6 6.207v9.043a.75.75 0 0 0 1.5 0V10.5a.5.5 0 0 1 1 0v4.75a.75.75 0 0 0 1.5 0v-8.5a.25.25 0 1 1 .5 0v2.5a.75.75 0 0 0 1.5 0V6.5a3 3 0 0 0-3-3H6.236a1 1 0 0 1-.447-.106l-.33-.165A.83.83 0 0 1 5 2.488V.75a.5.5 0 0 0-1.5 0v2.083c0 .715.404 1.37 1.044 1.689L5.5 5c.32.32.5.754.5 1.207" />
-    <path d="M8 3a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3" />
-  </svg>
-
-  <svg id="pesquisar-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-search" viewBox="0 0 16 16">
-    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-  </svg>
-
-  <svg id="cadastrar-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-archive-fill" viewBox="0 0 16 16">
-    <path d="M12.643 15C13.979 15 15 13.845 15 12.5V5H1v7.5C1 13.845 2.021 15 3.357 15zM5.5 7h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1 0-1M.8 1a.8.8 0 0 0-.8.8V3a.8.8 0 0 0 .8.8h14.4A.8.8 0 0 0 16 3V1.8a.8.8 0 0 0-.8-.8z" />
-  </svg>
-
-  <svg id="relatorios-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-bar-graph-fill" viewBox="0 0 16 16">
-    <path d="M12 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2m-2 11.5v-6a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5m-2.5.5a.5.5 0 0 1-.5-.5v-4a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v4a.5.5 0 0 1-.5-.5zm-3 0a.5.5 0 0 1-.5-.5v-2a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.5-.5z" />
-  </svg>
-  
-  <svg id="pdf-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-file-earmark-arrow-down-fill" viewBox="0 0 16 16">
-    <path d="M9.293 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2V4.707A1 1 0 0 0 13.707 4L10 .293A1 1 0 0 0 9.293 0M9.5 3.5v-2l3 3h-2a1 1 0 0 1-1-1m-1 4v3.793l1.146-1.147a.5.5 0 0 1 .708.708l-2 2a.5.5 0 0 1-.708 0l-2-2a.5.5 0 0 1 .708-.708L7.5 11.293V7.5a.5.5 0 0 1 1 0"/>
-  </svg>
-  
-</body>
-
-</html>
+</nav>

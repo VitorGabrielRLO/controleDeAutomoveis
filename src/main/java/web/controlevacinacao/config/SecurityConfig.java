@@ -2,9 +2,7 @@ package web.controlevacinacao.config;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.sql.DataSource;
-
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -50,14 +48,12 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService(DataSource dataSource) {
         JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
 
-        // Consulta para buscar o usuário pelo nome de usuário
         manager.setUsersByUsernameQuery("select nome_usuario, senha, ativo from usuario where nome_usuario = ?");
 
-        // ===== CONSULTA DE AUTORIDADES CORRIGIDA E SIMPLIFICADA =====
         manager.setAuthoritiesByUsernameQuery(
-                "select u.nome_usuario, p.nome from usuario_papel up " +
-                "join usuario u on u.codigo = up.codigo_usuario " +
-                "join papel p on p.codigo = up.codigo_papel " +
+                "select u.nome_usuario, p.nome from usuario u " +
+                "join usuario_papel up on u.codigo = up.codigo_usuario " +
+                "join papel p on up.codigo_papel = p.codigo " +
                 "where u.nome_usuario = ?");
         
         return manager;
