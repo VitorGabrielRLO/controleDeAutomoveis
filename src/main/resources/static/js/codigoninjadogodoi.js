@@ -174,6 +174,24 @@ function atualizarCSRF() {
   csrfToken = document.querySelector("input[name=csrf-token]").value;
 }
 
+document.body.addEventListener('showMessage', function(evt) {
+    if (evt.detail && evt.detail.message) {
+        Toast.fire({
+            icon: evt.detail.type || 'info',
+            title: evt.detail.message,
+            timer: 4000,
+        });
+    }
+});
+
+document.body.addEventListener('saidaAtualizada', function(evt) {
+    const modalPlaceholder = document.getElementById('modal-placeholder');
+    if (modalPlaceholder) {
+        modalPlaceholder.innerHTML = '';
+    }
+});
+
+
 document.body.addEventListener("htmx:configRequest", (evt) => {
   evt.detail.headers["accept"] = "text/html-partial";
   if (evt.detail.verb !== "get") {

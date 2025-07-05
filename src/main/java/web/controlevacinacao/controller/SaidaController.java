@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import io.github.wimdeblauwe.htmx.spring.boot.mvc.HxRequest;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import web.controlevacinacao.model.Saida;
 import web.controlevacinacao.model.Status;
@@ -74,7 +75,7 @@ public class SaidaController {
     public String abrirPesquisar(Model model, HttpServletRequest request) {
         model.addAttribute("saidas", saidaRepository.findAll(Sort.by("dataHoraSaida").descending()));
         if ("true".equals(request.getHeader("HX-Request"))) {
-            return "saidas/listar :: conteudo"; // CORRETO
+            return "saidas/listar :: conteudo";
         }
         return "saidas/listar";
     }
@@ -92,28 +93,30 @@ public class SaidaController {
     @HxRequest
     public String processarRetorno(@PathVariable Long id, 
                                    @RequestParam("kmRetorno") double kmRetorno, 
-                                   Model model) { 
+                                   Model model, HttpServletResponse response) { 
         try {
             saidaService.registrarRetorno(id, kmRetorno);
             
-            model.addAttribute("notificacao", new NotificacaoSweetAlert2(
-                "Retorno do veículo registrado com sucesso!", TipoNotificaoSweetAlert2.SUCCESS, 4000));
+            // Dispara um evento para o frontend atualizar a lista e fechar o modal
+            response.addHeader("HX-Trigger", "listaSaidasAtualizada");
             
-            model.addAttribute("saidas", saidaRepository.findAll(Sort.by("dataHoraSaida").descending()));
-
-            // Retorna o fragmento correto para substituir #main
-            return "saidas/listar :: conteudo";
+            // Retorna um HTML vazio para limpar o placeholder do modal
+            // Para isso, precisamos de um template vazio.
+            // Se você não quiser criar o arquivo empty.html, pode retornar @ResponseBody String e uma string vazia.
+            return "layout/fragments/empty :: empty";
 
         } catch (IllegalArgumentException | IllegalStateException e) {
             Saida saida = saidaRepository.findById(id).get();
             model.addAttribute("saida", saida);
             model.addAttribute("erro_km", e.getMessage());
+            // Em caso de erro, renderiza o modal novamente para substituir o antigo
             return "saidas/retornar :: modal"; 
         }
     }
-     @GetMapping("/cancelar-retorno")
+     
+    @GetMapping("/cancelar-retorno")
     @HxRequest
-    @ResponseBody // Retorna o corpo da resposta diretamente, sem procurar um template
+    @ResponseBody // Retorna o corpo da resposta diretamente
     public String cancelarRetorno() {
         return ""; // Retorna vazio para limpar o #modal-placeholder
     }
