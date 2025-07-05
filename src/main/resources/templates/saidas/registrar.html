@@ -4,13 +4,17 @@
     <title>Registrar Saída</title>
 </head>
 <body>
-    <main layout:fragment="conteudo" id="main" class="flex flex-col align-middle w-full m-10">
+    <main layout:fragment="conteudo" id="main" class="flex flex-col align-middle w-full m-10" th:fragment="conteudo">
         <div th:replace="~{layout/fragments/csrf :: csrf}"></div>
         <h2 class="text-xl font-semibold text-gray-400 md:text-3xl">Registrar Saída de Veículo</h2>
 
-        <form th:action="@{/saidas/registrar}" th:object="${saida}" method="post" class="w-2/3 mt-10">
+        <form th:hx-post="@{/saidas/registrar}" hx-target="#main" hx-swap="outerHTML" th:object="${saida}" class="w-2/3 mt-10">
             <div class="flex flex-col space-y-4">
-
+                <div th:if="${notificacao != null}" th:object="${notificacao}">
+                    <input type="hidden" id="mensagem" th:value="*{mensagem}">
+                    <input type="hidden" id="tipo" th:value="*{tipo}">
+                    <input type="hidden" id="intervalo" th:value="*{intervalo}">
+                </div>
                 <div>
                     <label for="funcionario" class="block text-gray-700 font-medium mb-2">Funcionário</label>
                     <select id="funcionario" th:field="*{funcionario}" class="w-1/2 py-3 px-4 border-gray-300 rounded-lg focus:border-gray-500 focus:ring-gray-500">
@@ -19,31 +23,20 @@
                     </select>
                     <p th:if="${#fields.hasErrors('funcionario')}" th:errors="*{funcionario}" class="text-sm text-red-600 mt-2"></p>
                 </div>
-
                 <div>
                     <label for="veiculo" class="block text-gray-700 font-medium mb-2">Veículo</label>
                     <select id="veiculo" th:field="*{veiculo}" class="w-1/2 py-3 px-4 border-gray-300 rounded-lg focus:border-gray-500 focus:ring-gray-500">
                         <option value="">Selecione um veículo</option>
-                        <option th:each="veic : ${veiculos}" th:value="${veic.codigo}" th:text="${veic.modelo} + ' - ' + ${veic.placa}"></option>
+                        <option th:each="veic : ${veiculos}" th:value="${veic.codigo}" th:text="${veic.modelo} + ' - ' + ${veic.placa} + ' (' + ${veic.quilometragem} + ' km)'"></option>
                     </select>
                     <p th:if="${#fields.hasErrors('veiculo')}" th:errors="*{veiculo}" class="text-sm text-red-600 mt-2"></p>
                 </div>
-
-                <div th:replace="~{layout/fragments/forms :: inputtext('Quantos KM vai rodar?', 'kmAndado')}"></div>
-                
                 <div th:replace="~{layout/fragments/forms :: inputtext('Destino', 'destino')}"></div>
-                
                 <div>
                     <button type="submit" class="mt-5 py-3 px-4 inline-flex items-center gap-x-2 text-sm font-medium rounded-lg border border-transparent bg-blue-100 text-blue-800 hover:bg-blue-200">Confirmar Saída</button>
                 </div>
             </div>
         </form>
-
-         <div th:if="${notificacao != null}" th:object="${notificacao}">
-            <input type="hidden" id="mensagem" th:value="*{mensagem}">
-            <input type="hidden" id="tipo" th:value="*{tipo}">
-            <input type="hidden" id="intervalo" th:value="*{intervalo}">
-        </div>
     </main>
 </body>
 </html>

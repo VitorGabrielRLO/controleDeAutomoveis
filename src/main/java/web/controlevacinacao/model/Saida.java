@@ -14,8 +14,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -39,23 +37,18 @@ public class Saida implements Serializable {
     @ManyToOne
     @JoinColumn(name = "codigo_veiculo")
     private Veiculo veiculo;
-    
+
     private LocalDateTime dataHoraSaida;
-    
+
     private LocalDateTime dataHoraRetorno;
 
     private double kmSaida;
-    
+
     private double kmRetorno;
-    
+
     @NotBlank(message = "O destino é obrigatório")
     private String destino;
-    
-    @Transient // Esta anotação diz ao JPA para NÃO criar esta coluna no banco de dados
-    @NotNull(message = "Informe quantos quilômetros serão rodados.")
-    @Min(value = 1, message = "O valor deve ser de no mínimo 1 KM.")
-    private Double kmAndado;
-    
+
     @Enumerated(EnumType.STRING)
     private Status status = Status.ATIVO;
 
@@ -115,21 +108,13 @@ public class Saida implements Serializable {
     public void setKmRetorno(double kmRetorno) {
         this.kmRetorno = kmRetorno;
     }
-    
+
     public String getDestino() {
         return destino;
     }
 
     public void setDestino(String destino) {
         this.destino = destino;
-    }
-    
-    public Double getKmAndado() {
-        return kmAndado;
-    }
-
-    public void setKmAndado(Double kmAndado) {
-        this.kmAndado = kmAndado;
     }
 
     public Status getStatus() {

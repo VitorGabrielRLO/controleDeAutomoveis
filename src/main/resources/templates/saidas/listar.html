@@ -4,7 +4,7 @@
     <title>Consultar Saídas</title>
 </head>
 <body>
-    <div layout:fragment="conteudo" id="content-wrapper">
+    <main layout:fragment="conteudo" id="main" class="flex flex-col align-middle w-full m-10" th:fragment="conteudo">
         <h2 class="text-xl font-semibold text-gray-400 md:text-3xl">Histórico de Saídas</h2>
 
         <div th:if="${notificacao != null}" th:object="${notificacao}">
@@ -18,7 +18,7 @@
                 <div class="min-w-full inline-block align-middle">
                     <div class="border rounded-xl overflow-hidden shadow">
                         <table class="min-w-full divide-y divide-gray-200">
-                            <thead>
+                           <thead>
                                 <tr>
                                     <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Funcionário</th>
                                     <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Veículo</th>
@@ -52,7 +52,6 @@
                 </div>
             </div>
         </div>
-
-        </div>
+    </main>
 </body>
 </html>
