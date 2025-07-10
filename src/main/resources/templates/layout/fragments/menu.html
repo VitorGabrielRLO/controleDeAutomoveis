@@ -1,55 +1,102 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" th:href="@{/css/style.css}" />
   <title>Controle de Veículos</title>
 </head>
-
 <body>
-  <nav th:fragment="menu" class="mt-10">
-    
+
+  <nav th:fragment="menu" class="mt-10 space-y-4">
+
+    <!-- Veículo -->
     <div x-data="{ open: false }">
       <button th:replace="~{layout/fragments/menu-item-button :: menu-item-button('Veículo', ~{::#veiculo-icon})}"></button>
       <div x-show="open" class="space-y-4 ps-10">
-        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Cadastrar', @{/veiculos/cadastrar}, ~{::#cadastrar-icon})}"></div>
-        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Pesquisar', @{/veiculos/abrirpesquisar}, ~{::#pesquisar-icon})}"></div>
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Cadastrar', @{'/veiculos/cadastrar'}, ~{::#cadastrar-icon})}"></div>
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Pesquisar', @{'/veiculos/abrirpesquisar'}, ~{::#pesquisar-icon})}"></div>
       </div>
     </div>
 
+    <!-- Funcionário -->
     <div x-data="{ open: false }">
-        <button th:replace="~{layout/fragments/menu-item-button :: menu-item-button('Funcionário', ~{::#funcionario-icon})}"></button>
-        <div x-show="open" class="space-y-4 ps-10">
-          <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Cadastrar', @{/funcionarios/cadastrar}, ~{::#cadastrar-icon})}"></div>
-          <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Pesquisar', @{/funcionarios/abrirpesquisar}, ~{::#pesquisar-icon})}"></div>
-        </div>
+      <button th:replace="~{layout/fragments/menu-item-button :: menu-item-button('Funcionário', ~{::#funcionario-icon})}"></button>
+      <div x-show="open" class="space-y-4 ps-10">
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Cadastrar', @{'/funcionarios/cadastrar'}, ~{::#cadastrar-icon})}"></div>
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Pesquisar', @{'/funcionarios/abrirpesquisar'}, ~{::#pesquisar-icon})}"></div>
+      </div>
     </div>
 
+    <!-- Usuários -->
+    <div x-data="{ open: false }">
+      <button th:replace="~{layout/fragments/menu-item-button :: menu-item-button('Usuários', ~{::#pessoa-icon})}"></button>
+      <div x-show="open" class="space-y-4 ps-10">
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Cadastrar', @{'/usuarios/cadastrar'}, ~{::#cadastrar-icon})}"></div>
+      </div>
+    </div>
+
+    <!-- Saídas -->
     <div x-data="{ open: false }">
       <button th:replace="~{layout/fragments/menu-item-button :: menu-item-button('Saídas', ~{::#saida-icon})}"></button>
       <div x-show="open" class="space-y-4 ps-10">
-        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Registrar Saída', @{/saidas/registrar}, ~{::#cadastrar-icon})}"></div>
-        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Consultar', @{/saidas/pesquisar}, ~{::#pesquisar-icon})}"></div>
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Cadastrar', @{'/saidas/registrar'}, ~{::#cadastrar-icon})}"></div>
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Consultar', @{'/saidas/pesquisar'}, ~{::#pesquisar-icon})}"></div>
       </div>
     </div>
 
-    <div x-data="{ open: false }">
+    <!-- Relatórios -->
+    <!-- <div x-data="{ open: false }">
       <button th:replace="~{layout/fragments/menu-item-button :: menu-item-button('Relatórios', ~{::#relatorios-icon})}"></button>
       <div x-show="open" class="space-y-4 ps-10">
-        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Relatório de Saídas', '/', ~{::#pdf-icon})}"></div>
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Saídas', @{'/relatorios/saidas'}, ~{::#pdf-icon})}"></div>
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Veículos', @{'/relatorios/veiculos'}, ~{::#pdf-icon})}"></div>
+        <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Funcionários', @{'/relatorios/funcionarios'}, ~{::#pdf-icon})}"></div>
       </div>
+    </div> -->
+
+    <!-- Relatórios -->
+<div x-data="{ open: false }">
+  <button
+    th:replace="~{layout/fragments/menu-item-button 
+      :: menu-item-button('Relatórios', ~{::#relatorios-icon})}">
+  </button>
+  <div x-show="open" class="space-y-4 ps-10">
+
+    <!-- Relatório de Saídas -->
+    <div class="flex items-center hover:text-white">
+      <svg class="me-2" th:replace="~{::#pdf-icon}"></svg>
+      <a th:href="@{/relatorios/saidas}"
+         class="px-2 text-gray-400 hover:text-white">
+        Saídas
+      </a>
     </div>
 
-    <div x-data="{ open: false }">
-        <button th:replace="~{layout/fragments/menu-item-button :: menu-item-button('Usuários', ~{::#pessoa-icon})}"></button>
-        <div x-show="open" class="space-y-4 ps-10">
-            <div th:replace="~{layout/fragments/menu-item-option :: menu-item-option('Cadastrar', @{/usuarios/cadastrar}, ~{::#cadastrar-icon})}"></div>
-        </div>
+    <!-- Relatório de Veículos -->
+    <div class="flex items-center hover:text-white">
+      <svg class="me-2" th:replace="~{::#pdf-icon}"></svg>
+      <a th:href="@{/relatorios/veiculos}"
+         class="px-2 text-gray-400 hover:text-white">
+        Veículos
+      </a>
     </div>
+
+    <!-- Relatório de Funcionários -->
+    <div class="flex items-center hover:text-white">
+      <svg class="me-2" th:replace="~{::#pdf-icon}"></svg>
+      <a th:href="@{/relatorios/funcionarios}"
+         class="px-2 text-gray-400 hover:text-white">
+        Funcionários
+      </a>
+    </div>
+
+  </div>
+</div>
 
   </nav>
+
+
+  <!-- Ícones SVG -->
 
   <svg id="veiculo-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-car-front-fill" viewBox="0 0 16 16">
     <path d="M2.52 3.515A2.5 2.5 0 0 1 4.82 2h6.362c1 0 1.904.596 2.298 1.515l.792 1.848c.075.175.21.319.38.404.5.25.855.715.965 1.262l.335 1.673c.09.448.01.92-.184 1.325a2.25 2.25 0 0 1-1.025.977l.086.417a1 1 0 1 1-1.94.424l-.082-.4-1.222.815a.5.5 0 0 1-.507 0l-1.222-.815-.082.4a1 1 0 1 1-1.94-.424l.086-.417a2.25 2.25 0 0 1-1.025-.977 2.22 2.22 0 0 1-.184-1.325l.335-1.673c.11-.547.465-1.012.965-1.262.17-.085.305-.229.38-.404l.792-1.848ZM3 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2m10 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2M6 8a1 1 0 0 0 0 2h4a1 1 0 1 0 0-2zM2.906 5.189a.51.51 0 0 0 .497.731c.91-.073 1.358-.585 1.432-1.028.28-.058.408.31.751.558l.349.255c.25.18.42.42.55.693.04.1.07.213.09.324l.01.072c.06.315.145.621.28.89.13.25.324.47.56.65l.014.01c.23.17.48.29.74.34l.014.003c.255.05.515.05.77-.005l.014-.003c.26-.05.51-.17.74-.34l.014-.01c.237-.18.43-.4.56-.65l.004-.007c.135-.269.22-.575.28-.89l.01-.072c.02-.11.05-.224.09-.324.13-.273.3-.513.55-.693l.35-.255c.34-.248.47-.616.75-.558.075.443.522.955 1.432 1.028.28.08.546-.055.623-.332l.792-1.848a.5.5 0 0 0-.21-.595c-.596-.346-1.587-.508-2.55-.508H4.82c-.963 0-1.954.162-2.55.508a.5.5 0 0 0-.21.595z"/>

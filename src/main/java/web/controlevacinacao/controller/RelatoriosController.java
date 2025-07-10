@@ -3,12 +3,9 @@ package web.controlevacinacao.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
-
 import web.controlevacinacao.service.RelatoriosService;
 
 @Controller
@@ -19,32 +16,36 @@ public class RelatoriosController {
     @Autowired
     private RelatoriosService relatorioService;
 
-    @GetMapping("/relatorios/vacinassimples")
-    public ResponseEntity<byte[]> gerarRelatorioSimplesTodasVacinas() {
-        logger.debug("Gerando relatório simples de todas as vacinas");
-
-        byte[] relatorio = relatorioService.gerarRelatorioSimplesTodasVacinas();
-
-        logger.debug("Relatório simples de todas as vacinas gerado");
-        logger.debug("Retornando o relatório simples de todas as vacinas");
+    @GetMapping("/relatorios/saidas")
+    public ResponseEntity<byte[]> gerarRelatorioTodasSaidas() {
+        logger.debug("Gerando relatório de todas as saídas");
+        byte[] pdf = relatorioService.gerarRelatorioTodasSaidas();
+        logger.debug("Relatório de todas as saídas gerado");
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=VacinasSimples.pdf")
-                .body(relatorio);
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=TodasSaidas.pdf")
+                .body(pdf);
     }
 
-    @GetMapping("/relatorios/vacinaslotes")
-	public ResponseEntity<byte[]> gerarRelatorioComplexoTodasVacinasLotes() {
-		logger.debug("Gerando relatório complexo de todas as vacinas com lotes");
-		
-		byte[] relatorio = relatorioService.gerarRelatorioComplexoTodasVacinasLotes();
-		
-		logger.debug("Relatório complexo de todas as vacinas com lotes");
-		logger.debug("Retornando o relatório complexo de todas as vacinas com lotes");
-		return ResponseEntity.ok()
-				.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_PDF_VALUE)
-				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=VacinasComLotes.pdf")
-				.body(relatorio);
-	}
+    @GetMapping("/relatorios/veiculos")
+    public ResponseEntity<byte[]> gerarRelatorioTodosVeiculos() {
+        logger.debug("Gerando relatório de todos os veículos");
+        byte[] pdf = relatorioService.gerarRelatorioTodosVeiculos();
+        logger.debug("Relatório de todos os veículos gerado");
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=TodosVeiculos.pdf")
+                .body(pdf);
+    }
 
+    @GetMapping("/relatorios/funcionarios")
+    public ResponseEntity<byte[]> gerarRelatorioTodosFuncionarios() {
+        logger.debug("Gerando relatório de todos os funcionários");
+        byte[] pdf = relatorioService.gerarRelatorioTodosFuncionarios();
+        logger.debug("Relatório de todos os funcionários gerado");
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=TodosFuncionarios.pdf")
+                .body(pdf);
+    }
 }

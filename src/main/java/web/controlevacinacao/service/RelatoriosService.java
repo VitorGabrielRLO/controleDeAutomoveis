@@ -9,21 +9,33 @@ import web.controlevacinacao.report.JaspersoftUtil;
 @Service
 public class RelatoriosService {
 
-    private DataSource dataSource;
-    private JaspersoftUtil jaspersoftUtil;
+  private final DataSource dataSource;
+  private final JaspersoftUtil jaspersoftUtil;
 
-    public RelatoriosService(DataSource dataSource, JaspersoftUtil jaspersoftUtil) {
-        this.dataSource = dataSource;
-        this.jaspersoftUtil = jaspersoftUtil;
-    }
+  public RelatoriosService(DataSource dataSource, JaspersoftUtil jaspersoftUtil) {
+    this.dataSource = dataSource;
+    this.jaspersoftUtil = jaspersoftUtil;
+  }
 
-    public byte[] gerarRelatorioSimplesTodasVacinas() {
-        return jaspersoftUtil.gerarRelatorio("/relatorios/RelatorioSQLDiretoSimples2.jasper", null, dataSource);
-    }
+  public byte[] gerarRelatorioTodasSaidas() {
+    // o path deve bater com o local em src/main/resources/relatorios
+    return jaspersoftUtil.gerarRelatorio(
+        "/relatorios/TodasSaidas.jasper",
+        null,
+        dataSource);
+  }
 
-    public byte[] gerarRelatorioComplexoTodasVacinasLotes() {
-        Map<String, Object> parametros = new HashMap<>();
-        parametros.put("TITULO", "Vacinas com Lotes");
-        return jaspersoftUtil.gerarRelatorio("/relatorios/RelatorioSQLDiretoComplexoParametros2.jasper", parametros, dataSource);
-    }
+  public byte[] gerarRelatorioTodosVeiculos() {
+    return jaspersoftUtil.gerarRelatorio(
+        "/relatorios/TodosVeiculos.jasper",
+        null,
+        dataSource);
+  }
+
+  public byte[] gerarRelatorioTodosFuncionarios() {
+    return jaspersoftUtil.gerarRelatorio(
+        "/relatorios/TodosFuncionarios.jasper",
+        null,
+        dataSource);
+  }
 }

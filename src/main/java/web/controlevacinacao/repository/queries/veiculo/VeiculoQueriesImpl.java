@@ -27,13 +27,11 @@ public class VeiculoQueriesImpl implements VeiculoQueries {
 
         preencherCondicoesEParametros(filtro, condicoes, parametros);
 
-        if (condicoes.isEmpty()) {
-            condicoes.append(" where v.status = 'ATIVO'");
-        } else {
-            condicoes.append(" and v.status = 'ATIVO'");
+        // A condição "WHERE" só será adicionada se houver filtros.
+        if (!condicoes.isEmpty()) {
+            queryVeiculos.append(" where ").append(condicoes);
         }
 
-        queryVeiculos.append(condicoes);
         PaginacaoUtil.prepararOrdemJPQL(queryVeiculos, "v", pageable);
         TypedQuery<Veiculo> typedQuery = em.createQuery(queryVeiculos.toString(), Veiculo.class);
         PaginacaoUtil.prepararIntervalo(typedQuery, pageable);

@@ -101,12 +101,24 @@ public class VeiculoController {
     }
 
     @HxRequest
-    @HxLocation(path = "/mensagem", target = "#main", swap = "outerHTML")
+    // A anotação HxLocation redireciona o cliente para a página de pesquisa após a ação.
+    @HxLocation(path = "/veiculos/abrirpesquisar", target = "#main", swap = "outerHTML")
     @GetMapping("/remover/{codigo}")
     public String removerHTMX(@PathVariable("codigo") Long codigo, RedirectAttributes attributes) {
-        veiculoService.desativar(codigo);
-        attributes.addFlashAttribute("notificacao",
-                new NotificacaoSweetAlert2("Veículo removido com sucesso!", TipoNotificaoSweetAlert2.SUCCESS, 4000));
+        try {
+            // Chama o novo método de exclusão
+            veiculoService.remover(codigo);
+            attributes.addFlashAttribute("notificacao",
+                    new NotificacaoSweetAlert2("Veículo excluído com sucesso!", TipoNotificaoSweetAlert2.SUCCESS, 4000));
+        } catch (IllegalStateException e) {
+            // Captura a exceção específica e exibe a mensagem para o usuário
+            attributes.addFlashAttribute("notificacao",
+                    new NotificacaoSweetAlert2(e.getMessage(), TipoNotificaoSweetAlert2.ERROR, 5000));
+        }
+        // O HxLocation se encarrega de atualizar a tela
         return "redirect:/veiculos/abrirpesquisar";
     }
+
+
+    
 }
