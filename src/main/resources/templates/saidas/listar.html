@@ -4,15 +4,21 @@
     <title>Consultar Saídas</title>
 </head>
 <body>
-    <main layout:fragment="conteudo" id="main" class="flex flex-col align-middle w-full m-10">
+    <div layout:fragment="conteudo" id="content-wrapper">
         <h2 class="text-xl font-semibold text-gray-400 md:text-3xl">Histórico de Saídas</h2>
+
+        <div th:if="${notificacao != null}" th:object="${notificacao}">
+            <input type="hidden" id="mensagem" th:value="*{mensagem}">
+            <input type="hidden" id="tipo" th:value="*{tipo}">
+            <input type="hidden" id="intervalo" th:value="*{intervalo}">
+        </div>
 
         <div class="hidden md:flex flex-col mt-10">
             <div class="overflow-x-auto">
                 <div class="min-w-full inline-block align-middle">
                     <div class="border rounded-xl overflow-hidden shadow">
                         <table class="min-w-full divide-y divide-gray-200">
-                           <thead>
+                            <thead>
                                 <tr>
                                     <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Funcionário</th>
                                     <th class="px-6 py-3 text-start text-xs font-medium text-gray-500 uppercase">Veículo</th>
@@ -30,7 +36,11 @@
                                     <td th:text="${saida.dataHoraRetorno != null ? #temporals.format(saida.dataHoraRetorno, 'dd/MM/yyyy HH:mm') : '---'}" class="px-6 py-4"></td>
                                     <td th:text="${saida.destino}" class="px-6 py-4"></td>
                                     <td class="px-6 py-4">
-                                        <a th:if="${saida.dataHoraRetorno == null}" href="#" class="cursor-pointer text-blue-600 hover:text-blue-500">Registrar Retorno</a>
+                                        <a th:if="${saida.dataHoraRetorno == null}" 
+                                           th:hx-get="@{/saidas/retornar/{id}(id=${saida.codigo})}" 
+                                           hx-target="#modal-placeholder" 
+                                           hx-swap="innerHTML"
+                                           class="cursor-pointer text-blue-600 hover:text-blue-500">Registrar Retorno</a>
                                     </td>
                                 </tr>
                                 <tr th:if="${#lists.isEmpty(saidas)}">
@@ -42,6 +52,7 @@
                 </div>
             </div>
         </div>
-    </main>
+
+        </div>
 </body>
 </html>
