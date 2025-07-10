@@ -120,13 +120,17 @@ function prepararConfirmacoes() {
   forms.forEach(function (form) {
     form.addEventListener("htmx:confirm", function (e) {
       e.preventDefault();
+      
+      // Pega o texto do botão do novo atributo, ou usa "Remover" como padrão.
+      const confirmButtonText = form.getAttribute('data-confirm-text') || 'Remover';
+
       Swal.fire({
         title: "Você tem certeza?",
         text: e.detail.question,
         icon: "warning",
         showCancelButton: true,
         cancelButtonText: "Cancelar",
-        confirmButtonText: "Remover",
+        confirmButtonText: confirmButtonText, // Usa a variável aqui
         confirmButtonColor: "#3085d6",
       }).then((result) => {
         if (result.isConfirmed) {

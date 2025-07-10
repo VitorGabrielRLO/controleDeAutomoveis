@@ -1,9 +1,11 @@
 package web.controlevacinacao.controller;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort; // <-- IMPORT ADICIONADO AQUI
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -35,11 +37,13 @@ public class SaidaController {
     @Autowired private SaidaRepository saidaRepository;
     @Autowired private SaidaService saidaService;
 
+    // ... outros métodos permanecem iguais ...
+
     @GetMapping("/registrar")
     public String abrirRegistrar(Saida saida, Model model) {
         model.addAttribute("funcionarios", funcionarioRepository.findAll());
         model.addAttribute("veiculos", veiculoRepository.findAll());
-        return "saidas/registrar";
+        return "saidas/registrar :: formulario";
     }
 
     @PostMapping("/registrar")
@@ -47,11 +51,9 @@ public class SaidaController {
         if (resultado.hasErrors()) {
             model.addAttribute("funcionarios", funcionarioRepository.findAll());
             model.addAttribute("veiculos", veiculoRepository.findAll());
-            return "saidas/registrar";
+            return "saidas/registrar :: formulario";
         }
-        
         saidaService.registrarSaida(saida);
-        
         redirectAttributes.addFlashAttribute("notificacao", new NotificacaoSweetAlert2(
                 "Saída registrada com sucesso!", TipoNotificaoSweetAlert2.SUCCESS, 4000));
         return "redirect:/saidas/registrar";
@@ -59,35 +61,40 @@ public class SaidaController {
 
     @GetMapping("/pesquisar")
     public String abrirPesquisar(Model model) {
-        // Agora o 'Sort.by' será reconhecido
         model.addAttribute("saidas", saidaRepository.findAll(Sort.by("dataHoraSaida").descending()));
         return "saidas/listar";
     }
     
-    @GetMapping("/retornar/{id}")
     @HxRequest
-    public String abrirRetorno(@PathVariable Long id, Model model) {
-        Saida saida = saidaRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Registro de Saída não encontrado: " + id));
-        model.addAttribute("saida", saida);
-        return "saidas/retornar :: modal";
+    @GetMapping("/pesquisar")
+    public String pesquisarHTMX(Model model) {
+        model.addAttribute("saidas", saidaRepository.findAll(Sort.by("dataHoraSaida").descending()));
+        return "saidas/listar :: tabela";
     }
 
     @PostMapping("/retornar/{id}")
+    @HxRequest
     public String processarRetorno(@PathVariable Long id, 
-                                   @RequestParam("kmRetorno") double kmRetorno, 
-                                   RedirectAttributes redirectAttributes, 
-                                   Model model) {
+                                   @RequestParam(name = "kmRetorno", required = false) Double kmRetorno, 
+                                   RedirectAttributes redirectAttributes) {
+        
+        if (kmRetorno == null) {
+            Map<Long, String> errors = new HashMap<>();
+            errors.put(id, "A quilometragem de retorno é obrigatória.");
+            redirectAttributes.addFlashAttribute("retorno_errors", errors);
+            return "redirect:/saidas/pesquisar";
+        }
+        
         try {
             saidaService.registrarRetorno(id, kmRetorno);
             redirectAttributes.addFlashAttribute("notificacao", new NotificacaoSweetAlert2(
                 "Retorno do veículo registrado com sucesso!", TipoNotificaoSweetAlert2.SUCCESS, 4000));
-            return "redirect:/saidas/pesquisar"; 
-        } catch (IllegalArgumentException e) {
-            Saida saida = saidaRepository.findById(id).get();
-            model.addAttribute("saida", saida);
-            model.addAttribute("erro_km", e.getMessage());
-            return "saidas/retornar :: modal";
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            Map<Long, String> errors = new HashMap<>();
+            errors.put(id, e.getMessage());
+            redirectAttributes.addFlashAttribute("retorno_errors", errors);
         }
+
+        return "redirect:/saidas/pesquisar";
     }
 }

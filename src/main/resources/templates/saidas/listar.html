@@ -4,7 +4,8 @@
     <title>Consultar Saídas</title>
 </head>
 <body>
-    <div layout:fragment="conteudo" id="content-wrapper">
+    <main layout:fragment="conteudo" th:fragment="tabela" id="main" class="flex flex-col align-middle w-full m-10">
+        <div th:replace="~{layout/fragments/csrf :: csrf}"></div>
         <h2 class="text-xl font-semibold text-gray-400 md:text-3xl">Histórico de Saídas</h2>
 
         <div th:if="${notificacao != null}" th:object="${notificacao}">
@@ -29,18 +30,37 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr th:each="saida : ${saidas}" class="odd:bg-white even:bg-gray-100">
+                                <tr th:each="saida : ${saidas}" class="odd:bg-white even:bg-gray-100 hover:bg-gray-200">
                                     <td th:text="${saida.funcionario.nome}" class="px-6 py-4"></td>
                                     <td th:text="${saida.veiculo.placa}" class="px-6 py-4"></td>
                                     <td th:text="${#temporals.format(saida.dataHoraSaida, 'dd/MM/yyyy HH:mm')}" class="px-6 py-4"></td>
                                     <td th:text="${saida.dataHoraRetorno != null ? #temporals.format(saida.dataHoraRetorno, 'dd/MM/yyyy HH:mm') : '---'}" class="px-6 py-4"></td>
                                     <td th:text="${saida.destino}" class="px-6 py-4"></td>
-                                    <td class="px-6 py-4">
-                                        <a th:if="${saida.dataHoraRetorno == null}" 
-                                           th:hx-get="@{/saidas/retornar/{id}(id=${saida.codigo})}" 
-                                           hx-target="#modal-placeholder" 
-                                           hx-swap="innerHTML"
-                                           class="cursor-pointer text-blue-600 hover:text-blue-500">Registrar Retorno</a>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                        <div th:if="${saida.dataHoraRetorno == null}">
+                                            <form class="flex items-center space-x-2"
+                                                  th:hx-post="@{/saidas/retornar/{id}(id=${saida.codigo})}"
+                                                  th:hx-confirm="'Confirmar o retorno do veículo ' + ${saida.veiculo.placa} + '?'"
+                                                  data-confirm-text="Confirmar" hx-target="#main"
+                                                  hx-swap="outerHTML">
+                                                
+                                                <div th:replace="~{layout/fragments/csrf :: csrf}"></div>
+                                                
+                                                <div>
+                                                    <input type="number" step="0.1" name="kmRetorno"
+                                                           th:placeholder="'KM atual: ' + ${saida.kmSaida}"
+                                                           class="block w-40 px-2 py-1 text-sm text-gray-500 border-gray-300 rounded-lg focus:border-gray-500 focus:ring-gray-500"
+                                                           required />
+                                                    <p th:if="${retorno_errors != null and retorno_errors.containsKey(saida.codigo)}"
+                                                       th:text="${retorno_errors.get(saida.codigo)}"
+                                                       class="text-xs text-red-600 mt-1"></p>
+                                                </div>
+                                                <button type="submit" class="px-3 py-1 bg-blue-500 text-white text-sm font-medium rounded-md hover:bg-blue-700">
+                                                    Registrar
+                                                </button>
+                                            </form>
+                                        </div>
+                                        <span th:if="${saida.dataHoraRetorno != null}">---</span>
                                     </td>
                                 </tr>
                                 <tr th:if="${#lists.isEmpty(saidas)}">
@@ -52,7 +72,6 @@
                 </div>
             </div>
         </div>
-
-        </div>
+    </main>
 </body>
 </html>

@@ -8,7 +8,11 @@
       <h3 class="text-lg leading-6 font-medium text-gray-900">Registrar Retorno do Veículo</h3>
       <p class="text-sm text-gray-500" th:text="${saida.veiculo.modelo} + ' - ' + ${saida.veiculo.placa}"></p>
 
-      <form th:action="@{/saidas/retornar/{id}(id=${saida.codigo})}" method="post" class="mt-4">
+      <form th:action="@{/saidas/retornar/{id}(id=${saida.codigo})}" 
+            th:hx-post="@{/saidas/retornar/{id}(id=${saida.codigo})}" 
+            hx-target="#modal-retorno" 
+            hx-swap="outerHTML"
+            class="mt-4">
         <div th:replace="~{layout/fragments/csrf :: csrf}"></div>
 
         <div class="mb-4">
@@ -21,9 +25,9 @@
           <button id="ok-btn" type="submit" class="px-4 py-2 bg-blue-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">
             Confirmar Retorno
           </button>
-          <a hx-get="/saidas/pesquisar" hx-target="#main" hx-swap="innerHTML" hx-push-url="true" class="mt-2 inline-block w-full px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md shadow-sm hover:bg-gray-300">
+          <button type="button" onclick="document.getElementById('modal-placeholder').innerHTML = ''" class="mt-2 text-center w-full px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md shadow-sm hover:bg-gray-300">
             Cancelar
-          </a>
+          </button>
         </div>
       </form>
     </div>
