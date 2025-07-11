@@ -15,6 +15,9 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
+import org.springframework.security.web.savedrequest.RequestCache;
 
 @Configuration
 public class SecurityConfig {
@@ -23,41 +26,59 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(configurer -> configurer
-                // Permite acesso público a recursos estáticos e à página inicial
+                // ... (suas outras regras de autorização)
                 .requestMatchers("/css/**", "/js/**", "/images/**", "/", "/index.html").permitAll()
-                // Define permissões de ADMIN para as rotas de cadastro, alteração e remoção
                 .requestMatchers("/veiculos/cadastrar", "/veiculos/alterar/**", "/veiculos/remover/**").hasRole("ADMIN")
                 .requestMatchers("/funcionarios/cadastrar", "/funcionarios/alterar/**", "/funcionarios/remover/**").hasRole("ADMIN")
                 .requestMatchers("/usuarios/cadastrar").hasRole("ADMIN")
                 .requestMatchers("/relatorios/**").hasRole("ADMIN")
-                // Qualquer outra requisição precisa de autenticação
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/login")
-                .defaultSuccessUrl("/", true) // Redireciona para a raiz após o login
+                .successHandler(htmxAuthenticationSuccessHandler()) // <-- Usando nosso handler customizado
                 .permitAll()
             )
             .logout(logout -> logout
-    .logoutUrl("/logout")
-    .logoutSuccessHandler(
-        (request, response, authentication) -> response.addHeader("HX-Redirect", "/")) // <-- Alterado para "/"
-    .invalidateHttpSession(true)
-    .deleteCookies("JSESSIONID"))
+                .logoutUrl("/logout")
+                .logoutSuccessHandler(
+                    (request, response, authentication) -> response.addHeader("HX-Redirect", "/"))
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID"))
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
             );
         return http.build();
     }
 
+    /**
+     * Cria um manipulador de sucesso de login que sabe lidar com HTMX.
+     */
+    @Bean
+    public AuthenticationSuccessHandler htmxAuthenticationSuccessHandler() {
+        return (request, response, authentication) -> {
+            // Se a requisição foi feita pelo HTMX, envie um cabeçalho para redirecionamento no cliente.
+            if ("true".equals(request.getHeader("HX-Request"))) {
+                response.setHeader("HX-Redirect", "/");
+            } else {
+                // Para requisições normais, use o comportamento padrão do Spring,
+                // que redireciona para a página que o usuário tentou acessar antes do login.
+                RequestCache requestCache = new HttpSessionRequestCache();
+                var savedRequest = requestCache.getRequest(request, response);
+                if (savedRequest != null) {
+                    response.sendRedirect(savedRequest.getRedirectUrl());
+                } else {
+                    response.sendRedirect("/"); // Fallback para a página inicial
+                }
+            }
+        };
+    }
+
     @Bean
     public UserDetailsService userDetailsService(DataSource dataSource) {
         JdbcUserDetailsManager manager = new JdbcUserDetailsManager(dataSource);
 
-        // Busca o usuário pelo nome de usuário [cite: 311-313]
         manager.setUsersByUsernameQuery("select nome_usuario, senha, ativo from usuario where nome_usuario = ?");
-
-        // Busca as permissões (roles) do usuário [cite: 314-318]
         manager.setAuthoritiesByUsernameQuery(
             "select u.nome_usuario, p.nome from usuario u " +
             "join usuario_papel up on u.codigo = up.codigo_usuario " +
@@ -68,13 +89,12 @@ public class SecurityConfig {
     }
 
     @Bean
-public PasswordEncoder passwordEncoder() {
-    // Para o teste, vamos usar "noop" como o codificador padrão.
-    String idEnconder = "noop"; 
-    Map<String, PasswordEncoder> encoders = new HashMap<>();
-    encoders.put("argon2", Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8());
-    encoders.put("noop", NoOpPasswordEncoder.getInstance());
-    PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(idEnconder, encoders);
-    return passwordEncoder;
-}
+    public PasswordEncoder passwordEncoder() {
+        String idEnconder = "noop"; 
+        Map<String, PasswordEncoder> encoders = new HashMap<>();
+        encoders.put("argon2", Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8());
+        encoders.put("noop", NoOpPasswordEncoder.getInstance());
+        PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(idEnconder, encoders);
+        return passwordEncoder;
+    }
 }
